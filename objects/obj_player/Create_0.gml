@@ -149,8 +149,8 @@ hold_state = function(){
 	//Player let go
 	} else {
 		state = free_state
-		x -= hsign_from_direction(pullDirection)
-		y -= vsign_from_direction(pullDirection)
+		x += hsign_from_direction(pullDirection)
+		y += vsign_from_direction(pullDirection)
 		vspd = pushKnockbackMult*pushSpd*vsign_from_direction(pushDirection)
 		hspd = pushKnockbackMult*pushSpd*hsign_from_direction(pushDirection)
 		pushDirection = noone
