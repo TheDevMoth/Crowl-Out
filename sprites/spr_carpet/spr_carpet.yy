@@ -69,8 +69,8 @@
   ],
   "nineSlice": null,
   "parent": {
-    "name": "Sprites",
-    "path": "folders/Assets/Sprites.yy",
+    "name": "Misc",
+    "path": "folders/Assets/Sprites/Misc.yy",
   },
   "resourceVersion": "1.0",
   "name": "spr_carpet",

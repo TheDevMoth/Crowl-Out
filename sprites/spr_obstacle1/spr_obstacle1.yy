@@ -69,8 +69,8 @@
   ],
   "nineSlice": null,
   "parent": {
-    "name": "Sprites",
-    "path": "folders/Assets/Sprites.yy",
+    "name": "Obstacles",
+    "path": "folders/Assets/Sprites/Obstacles.yy",
   },
   "resourceVersion": "1.0",
   "name": "spr_obstacle1",

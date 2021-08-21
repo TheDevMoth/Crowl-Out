@@ -28,6 +28,6 @@ function push(wallsPushed, vdist, hdist){
 	}
 	x+=hdist
 	y+=vdist
-	alarm[0] = 3
+	//alarm[0] = 10
 	return true
 }

@@ -69,8 +69,8 @@
   ],
   "nineSlice": null,
   "parent": {
-    "name": "Sprites",
-    "path": "folders/Assets/Sprites.yy",
+    "name": "Tile sprites",
+    "path": "folders/Assets/Sprites/Tile sprites.yy",
   },
   "resourceVersion": "1.0",
   "name": "spr_woodenRoom",

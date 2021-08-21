@@ -79,8 +79,8 @@
   ],
   "nineSlice": null,
   "parent": {
-    "name": "Sprites",
-    "path": "folders/Assets/Sprites.yy",
+    "name": "Placeholders",
+    "path": "folders/Assets/Sprites/Placeholders.yy",
   },
   "resourceVersion": "1.0",
   "name": "spr_crowPlaceholder",

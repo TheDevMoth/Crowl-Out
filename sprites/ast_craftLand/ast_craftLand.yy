@@ -69,8 +69,8 @@
   ],
   "nineSlice": null,
   "parent": {
-    "name": "Sprites",
-    "path": "folders/Assets/Sprites.yy",
+    "name": "Sprite sheets",
+    "path": "folders/Assets/Sprites/Sprite sheets.yy",
   },
   "resourceVersion": "1.0",
   "name": "ast_craftLand",
