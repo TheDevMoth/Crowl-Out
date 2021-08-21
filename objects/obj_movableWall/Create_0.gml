@@ -1,6 +1,7 @@
 /// @desc Set up
 //Pick a random sprite
-sprite_index = sprite
+//sprite_index = sprite
+solid = true
 wallsBeingPushed = ds_list_create()
 
 

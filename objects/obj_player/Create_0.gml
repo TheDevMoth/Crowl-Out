@@ -4,7 +4,7 @@ moveAcc = 0.3
 walkSpd = 1
 runSpd = 3
 pushSpd = 0.1
-wallsCanPush = 3 //number of walls crow can push together
+wallsCanPush = 1 //number of walls crow can push together
 pushKnockbackMult = -5
 
 // Variables used for logic

@@ -69,8 +69,8 @@
   ],
   "nineSlice": null,
   "parent": {
-    "name": "Objects",
-    "path": "folders/Assets/Sprites/Obstacles/Objects.yy",
+    "name": "Moveable Objects",
+    "path": "folders/Assets/Sprites/Obstacles/Moveable Objects.yy",
   },
   "resourceVersion": "1.0",
   "name": "spr_rock",
