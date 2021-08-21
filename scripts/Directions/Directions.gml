@@ -2,7 +2,7 @@
 function find_direction(speed,hORv){
 	if(hORv == "h"){
 		if(speed == 0){
-			return noone
+			return 0
 		} else if (speed>0){
 			return RIGHT
 		} else {
@@ -10,35 +10,14 @@ function find_direction(speed,hORv){
 		}	
 	} else if (hORv == "v"){
 		if(speed == 0){
-			return noone
+			return 0
 		} else if (speed>0){
 			return DOWN
 		} else {
 			return UP
 		}
 	} else {
-		show_debug_message("DUDE H OR V")
-		return noone
-	}
-}
-
-function sign_from_direction(direction){
-	switch(direction){
-		case(UP):
-			return -1
-		break
-		case(RIGHT):
-			return 1
-		break
-		case(DOWN):
-			return 1
-		break
-		case(LEFT):
-			return -1
-		break
-		case(noone):
-			return 0
-		break
+		show_error("DUDE H OR V", true)
 	}
 }
 
@@ -100,5 +79,24 @@ function command_from_direction(direction){
 		break
 		default:
 			show_error("In find_command_from_direction() \nError: Direction undefined", true)
+	}
+}
+
+function find_opposite_direction(direction){
+	switch(direction){
+		case(UP):
+			return DOWN
+		break
+		case(RIGHT):
+			return LEFT
+		break
+		case(DOWN):
+			return UP
+		break
+		case(LEFT):
+			return RIGHT
+		break
+		default:
+			show_error("In find_opposite_direction() \nError: Direction undefined", true)
 	}
 }

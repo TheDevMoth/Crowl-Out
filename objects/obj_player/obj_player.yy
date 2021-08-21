@@ -5,7 +5,10 @@
   },
   "solid": false,
   "visible": true,
-  "spriteMaskId": null,
+  "spriteMaskId": {
+    "name": "spr_crow_stand",
+    "path": "sprites/spr_crow_stand/spr_crow_stand.yy",
+  },
   "persistent": false,
   "parentObjectId": null,
   "physicsObject": false,

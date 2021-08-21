@@ -1,33 +1,41 @@
 /// @desc Set up
 //Pick a random sprite
-if(sprite = noone){
-	sprite = choose(spr_obstacle1,spr_obstacle2,spr_obstacle3,spr_obstacle4,spr_obstacle5)
-}
 sprite_index = sprite
+wallsBeingPushed = ds_list_create()
 
-function push(wallsPushed, vdist, hdist){
+
+function push(wallsCanPush, hdist, vdist){
 	//check if player can push this many walls
-	if(wallsPushed == 0){
-		
+	if(wallsCanPush == 0){
 		return false
 	}
 	
 	//Check for walls
-	if(!place_free(x+roundout(hdist), y+roundout(vdist))){
-		var pushedWall = instance_place(x+roundout(hdist), y+roundout(vdist), obj_movableWall)
-		//Movable wall
-		if(pushedWall != noone){
-			var pushable = pushedWall.push(wallsPushed-1, vdist, hdist)
-			if (!pushable){
-				return false
+	if(!place_free(x+sign(hdist), y+sign(vdist))){
+		//Check for movable walls
+		ds_list_clear(wallsBeingPushed)
+		var numWallsInTheWay = instance_place_list(x+sign(hdist), y+sign(vdist), obj_movableWall, wallsBeingPushed, false)
+		if(numWallsInTheWay != 0 && numWallsInTheWay <= wallsCanPush){
+			var pushable = true //pushable until proven otherwise
+			for(var i = 0; i<numWallsInTheWay; i+=1){
+				pushable = (pushable && wallsBeingPushed[|i].push(floor((wallsCanPush-1)/numWallsInTheWay), hdist, vdist))
 			}
-		//Immovable wall
-		} else {
-			return false
-		}
+			if(pushable){
+				//Success
+				x += hdist
+				y += vdist
+				alarm[0] = 6
+				return true
+			} //Case further walls can not move
+		} //Case too many walls infront of it or 0 meaning immovable wall
+	} else {
+		//Case nothing in the way
+		x += hdist
+		y += vdist
+		alarm[0] = 6
+		return true
 	}
-	x+=hdist
-	y+=vdist
-	//alarm[0] = 10
-	return true
+	
+	return false
+	
 }

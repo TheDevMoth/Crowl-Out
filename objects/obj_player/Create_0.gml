@@ -4,8 +4,8 @@ moveAcc = 0.3
 walkSpd = 1
 runSpd = 3
 pushSpd = 0.1
-wallsCanPush = 2 //number of walls crow can push together
-pushKnockbackMult = -6
+wallsCanPush = 3 //number of walls crow can push together
+pushKnockbackMult = -5
 
 // Variables used for logic
 maxSpd = walkSpd
@@ -13,6 +13,8 @@ hspd = 0
 vspd = 0
 state = noone
 pushDirection = noone
+pushCommand = noone
+pullCommand = noone
 wallsPushed = ds_list_create() //Objects being currently pushed by the player
 
 /// ---- State code ---- ///
@@ -36,7 +38,7 @@ free_state = function(){
 	if(abs(hspd) < moveAcc/4) hspd = 0
 	
 	//Collision detection
-	if(!place_free(x+roundout(hspd), y)){
+	if(hspd != 0 && !place_free(x+roundout(hspd), y)){
 		//x = trunc(x) //FIX assumes maxSpd = 1
 		pushDirection = find_direction(hspd, "h")
 		pushCommand = command_from_direction(pushDirection)
@@ -44,7 +46,7 @@ free_state = function(){
 		vspd = 0
 		state = push_state
 	}
-	if(!place_free(x, y+roundout(vspd))){
+	if(vspd != 0 && !place_free(x, y+roundout(vspd))){
 		//y = trunc(y) //FIX assumes maxSpd = 1
 		pushDirection = find_direction(vspd, "v")
 		pushCommand = command_from_direction(pushDirection)
@@ -63,7 +65,8 @@ push_state = function(){
 	//Player starts holding the object
 	if(cmdHOLD()){
 		state = hold_state
-		//TODO Figure out what comes here
+		pullDirection = find_opposite_direction(pushDirection)
+		pullCommand = command_from_direction(pullDirection)
 	
 	//Player still pushing
 	} else if(pushCommand()) {
@@ -74,7 +77,7 @@ push_state = function(){
 			if(numWallsBeingPushed <= wallsCanPush ){
 				var pushable = true //pushable until proven otherwise
 				for(var i = 0; i<numWallsBeingPushed; i+=1){
-					pushable = (pushable && wallsPushed[|i].push(floor(wallsCanPush/numWallsBeingPushed), pushSpd*vsign_from_direction(pushDirection), pushSpd*hsign_from_direction(pushDirection)))
+					pushable = (pushable && wallsPushed[|i].push(floor(wallsCanPush/numWallsBeingPushed), pushSpd*hsign_from_direction(pushDirection), pushSpd*vsign_from_direction(pushDirection)))
 				}
 				if(pushable){
 					// TODO play sound
@@ -86,15 +89,76 @@ push_state = function(){
 	//player let go of the object
 	} else {
 		state = free_state
+		x -= hsign_from_direction(pushDirection)
+		y -= vsign_from_direction(pushDirection)
 		vspd = pushKnockbackMult*pushSpd*vsign_from_direction(pushDirection)
 		hspd = pushKnockbackMult*pushSpd*hsign_from_direction(pushDirection)
 		pushDirection = noone
+		pushCommand = noone
 	}
 }
 
 /// Hold State ///
 hold_state = function(){
-	
+	if(cmdHOLD()){
+		if(pushCommand() && !pullCommand()){
+			if(!instance_place(x+hsign_from_direction(pushDirection), y+vsign_from_direction(pushDirection), obj_wall)){
+				ds_list_clear(wallsPushed)
+				var numWallsBeingPushed = instance_place_list(x+hsign_from_direction(pushDirection), y+vsign_from_direction(pushDirection), obj_movableWall, wallsPushed, false)
+				if(numWallsBeingPushed <= wallsCanPush){
+					var pushable = true //pushable until proven otherwise
+					for(var i = 0; i<numWallsBeingPushed; i+=1){
+						pushable = (pushable && wallsPushed[|i].push(floor(wallsCanPush/numWallsBeingPushed), pushSpd*hsign_from_direction(pushDirection), pushSpd*vsign_from_direction(pushDirection)))
+					}
+					if(pushable){
+						// TODO play sound
+						x += pushSpd*hsign_from_direction(pushDirection)
+						y += pushSpd*vsign_from_direction(pushDirection)
+					}
+				}
+			}
+		} else if (pullCommand()){
+			//is space behind player empty
+			if(place_free(x-hsign_from_direction(pushDirection), y-vsign_from_direction(pushDirection))){
+				//if walls are pullable pull them
+				var numWallsBeingPulled = ds_list_size(wallsPushed)
+				if(numWallsBeingPulled <= wallsCanPush){
+					for(var i = 0; i<numWallsBeingPulled; i+=1){
+						var iwallPullable = wallsPushed[|i].push(floor(wallsCanPush/numWallsBeingPulled), pushSpd*hsign_from_direction(pullDirection), pushSpd*vsign_from_direction(pullDirection))
+						//if the wall is blocked by something stop pulling it
+						if (!iwallPullable){
+							ds_list_delete(wallsPushed, i)
+							//When an entry is deleted the next will take it's place. 
+							//if this is not the last entry decrease i to do the same position again, and n to not go out of range
+							if((i+1)<numWallsBeingPulled){
+								i -= 1
+								numWallsBeingPulled -= 1
+							}
+						}
+					}
+					//If all walls are blocked don't move
+					if(ds_list_size(wallsPushed) != 0){
+						// TODO play sound
+						x += pushSpd*hsign_from_direction(pullDirection)
+						y += pushSpd*vsign_from_direction(pullDirection)
+					}
+				}
+			}
+		}
+		
+	//Player let go
+	} else {
+		state = free_state
+		x -= hsign_from_direction(pullDirection)
+		y -= vsign_from_direction(pullDirection)
+		vspd = pushKnockbackMult*pushSpd*vsign_from_direction(pushDirection)
+		hspd = pushKnockbackMult*pushSpd*hsign_from_direction(pushDirection)
+		pushDirection = noone
+		pullDirection = noone
+		pushCommand = noone
+		pullCommand = noone
+		
+	}
 }
 
 state = free_state
