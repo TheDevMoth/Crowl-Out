@@ -1,5 +1,4 @@
-/// @desc Movement & interactions
+/// @desc run state
 
 //Run current state function
 state()
-

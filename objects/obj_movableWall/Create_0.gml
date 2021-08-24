@@ -5,7 +5,7 @@ solid = true
 wallsBeingPushed = ds_list_create()
 
 
-function push(wallsCanPush, hdist, vdist){
+push = function(wallsCanPush, hdist, vdist){
 	//check if player can push this many walls
 	if(wallsCanPush == 0){
 		return false

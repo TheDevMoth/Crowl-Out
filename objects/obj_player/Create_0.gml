@@ -1,11 +1,13 @@
-/// @desc Set up
+/// @desc Set up variables and states
+
 // Variables that control feel
 moveAcc = 0.3
 walkSpd = 1
 runSpd = 3
 pushSpd = 0.1
 wallsCanPush = 1 //number of walls crow can push together
-pushKnockbackMult = -5
+pushKnockbackMult = -4
+pullBufferDistance = 6 //Minimum number of pixels between the player and the object behind them when pulling. to disallow players from half pulling
 
 // Variables used for logic
 maxSpd = walkSpd
@@ -16,6 +18,55 @@ pushDirection = noone
 pushCommand = noone
 pullCommand = noone
 wallsPushed = ds_list_create() //Objects being currently pushed by the player
+
+/// ---- Functions ---- ///
+push = function(){
+	//Check for immovable walls if not found check for movable walls
+	if(!instance_place(x+hsign_from_direction(pushDirection), y+vsign_from_direction(pushDirection), obj_wall)){
+		ds_list_clear(wallsPushed)
+		var numWallsBeingPushed = instance_place_list(x+hsign_from_direction(pushDirection), y+vsign_from_direction(pushDirection), obj_movableWall, wallsPushed, false)
+		if(numWallsBeingPushed <= wallsCanPush ){
+			var pushable = true //pushable until proven otherwise
+			for(var i = 0; i<numWallsBeingPushed; i+=1){
+				pushable = (pushable && wallsPushed[|i].push(floor(wallsCanPush/numWallsBeingPushed), pushSpd*hsign_from_direction(pushDirection), pushSpd*vsign_from_direction(pushDirection)))
+			}
+			if(pushable){
+				// TODO play sound
+				x += pushSpd*hsign_from_direction(pushDirection)
+				y += pushSpd*vsign_from_direction(pushDirection)
+			}
+		}
+	}
+}
+
+pull = function(){
+	//is space behind player empty
+	if(place_free(x+hsign_from_direction(pullDirection)*pullBufferDistance, y+vsign_from_direction(pullDirection)*pullBufferDistance)){
+		//if walls are pullable pull them
+		var numWallsBeingPulled = ds_list_size(wallsPushed)
+		if(numWallsBeingPulled <= wallsCanPush){
+			for(var i = 0; i<numWallsBeingPulled; i+=1){
+				var iwallPullable = wallsPushed[|i].push(floor(wallsCanPush/numWallsBeingPulled), pushSpd*hsign_from_direction(pullDirection), pushSpd*vsign_from_direction(pullDirection))
+				//if the wall is blocked by something stop pulling it
+				if (!iwallPullable){
+					ds_list_delete(wallsPushed, i)
+					//When an entry is deleted the next will take it's place. 
+					//if this is not the last entry decrease i to do the same position again, and n to not go out of range
+					if((i+1)<numWallsBeingPulled){
+						i -= 1
+						numWallsBeingPulled -= 1
+					}
+				}
+			}
+			//If all walls are blocked don't move
+			if(ds_list_size(wallsPushed) != 0){
+				// TODO play sound
+				x += pushSpd*hsign_from_direction(pullDirection)
+				y += pushSpd*vsign_from_direction(pullDirection)
+			}
+		}
+	}
+}
 
 /// ---- State code ---- ///
 /// Free State ///
@@ -39,7 +90,6 @@ free_state = function(){
 	
 	//Collision detection
 	if(hspd != 0 && !place_free(x+roundout(hspd), y)){
-		//x = trunc(x) //FIX assumes maxSpd = 1
 		pushDirection = find_direction(hspd, "h")
 		pushCommand = command_from_direction(pushDirection)
 		hspd = 0
@@ -47,7 +97,6 @@ free_state = function(){
 		state = push_state
 	}
 	if(vspd != 0 && !place_free(x, y+roundout(vspd))){
-		//y = trunc(y) //FIX assumes maxSpd = 1
 		pushDirection = find_direction(vspd, "v")
 		pushCommand = command_from_direction(pushDirection)
 		hspd = 0
@@ -70,22 +119,7 @@ push_state = function(){
 	
 	//Player still pushing
 	} else if(pushCommand()) {
-		//Check for immovable walls if not found check for movable walls
-		if(!instance_place(x+hsign_from_direction(pushDirection), y+vsign_from_direction(pushDirection), obj_wall)){
-			ds_list_clear(wallsPushed)
-			var numWallsBeingPushed = instance_place_list(x+hsign_from_direction(pushDirection), y+vsign_from_direction(pushDirection), obj_movableWall, wallsPushed, false)
-			if(numWallsBeingPushed <= wallsCanPush ){
-				var pushable = true //pushable until proven otherwise
-				for(var i = 0; i<numWallsBeingPushed; i+=1){
-					pushable = (pushable && wallsPushed[|i].push(floor(wallsCanPush/numWallsBeingPushed), pushSpd*hsign_from_direction(pushDirection), pushSpd*vsign_from_direction(pushDirection)))
-				}
-				if(pushable){
-					// TODO play sound
-					x += pushSpd*hsign_from_direction(pushDirection)
-					y += pushSpd*vsign_from_direction(pushDirection)
-				}
-			}
-		}
+		push()
 	//player let go of the object
 	} else {
 		state = free_state
@@ -102,48 +136,9 @@ push_state = function(){
 hold_state = function(){
 	if(cmdHOLD()){
 		if(pushCommand() && !pullCommand()){
-			if(!instance_place(x+hsign_from_direction(pushDirection), y+vsign_from_direction(pushDirection), obj_wall)){
-				ds_list_clear(wallsPushed)
-				var numWallsBeingPushed = instance_place_list(x+hsign_from_direction(pushDirection), y+vsign_from_direction(pushDirection), obj_movableWall, wallsPushed, false)
-				if(numWallsBeingPushed <= wallsCanPush){
-					var pushable = true //pushable until proven otherwise
-					for(var i = 0; i<numWallsBeingPushed; i+=1){
-						pushable = (pushable && wallsPushed[|i].push(floor(wallsCanPush/numWallsBeingPushed), pushSpd*hsign_from_direction(pushDirection), pushSpd*vsign_from_direction(pushDirection)))
-					}
-					if(pushable){
-						// TODO play sound
-						x += pushSpd*hsign_from_direction(pushDirection)
-						y += pushSpd*vsign_from_direction(pushDirection)
-					}
-				}
-			}
+			push()
 		} else if (pullCommand()){
-			//is space behind player empty
-			if(place_free(x-hsign_from_direction(pushDirection), y-vsign_from_direction(pushDirection))){
-				//if walls are pullable pull them
-				var numWallsBeingPulled = ds_list_size(wallsPushed)
-				if(numWallsBeingPulled <= wallsCanPush){
-					for(var i = 0; i<numWallsBeingPulled; i+=1){
-						var iwallPullable = wallsPushed[|i].push(floor(wallsCanPush/numWallsBeingPulled), pushSpd*hsign_from_direction(pullDirection), pushSpd*vsign_from_direction(pullDirection))
-						//if the wall is blocked by something stop pulling it
-						if (!iwallPullable){
-							ds_list_delete(wallsPushed, i)
-							//When an entry is deleted the next will take it's place. 
-							//if this is not the last entry decrease i to do the same position again, and n to not go out of range
-							if((i+1)<numWallsBeingPulled){
-								i -= 1
-								numWallsBeingPulled -= 1
-							}
-						}
-					}
-					//If all walls are blocked don't move
-					if(ds_list_size(wallsPushed) != 0){
-						// TODO play sound
-						x += pushSpd*hsign_from_direction(pullDirection)
-						y += pushSpd*vsign_from_direction(pullDirection)
-					}
-				}
-			}
+			pull()
 		}
 		
 	//Player let go
