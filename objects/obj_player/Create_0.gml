@@ -8,6 +8,7 @@ pushSpd = 0.1
 wallsCanPush = 1 //number of walls crow can push together
 pushKnockbackMult = -4
 pullBufferDistance = 6 //Minimum number of pixels between the player and the object behind them when pulling. to disallow players from half pulling
+swingDistance = 2
 
 // Variables used for logic
 maxSpd = walkSpd
@@ -15,15 +16,18 @@ hspd = 0
 vspd = 0
 state = noone
 pushDirection = noone
+pullDirection = noone
 pushCommand = noone
 pullCommand = noone
 wallsPushed = ds_list_create() //Objects being currently pushed by the player
+heldPickableSpr = noone
 
 /// ---- Functions ---- ///
 push = function(){
-	//Check for immovable walls if not found check for movable walls
+	//Check for walls
 	if(!instance_place(x+hsign_from_direction(pushDirection), y+vsign_from_direction(pushDirection), obj_wall)){
 		ds_list_clear(wallsPushed)
+		//Check for movable walls, if none are found it is an immovable wall
 		var numWallsBeingPushed = instance_place_list(x+hsign_from_direction(pushDirection), y+vsign_from_direction(pushDirection), obj_movableWall, wallsPushed, false)
 		if(numWallsBeingPushed <= wallsCanPush ){
 			var pushable = true //pushable until proven otherwise
@@ -66,6 +70,38 @@ pull = function(){
 			}
 		}
 	}
+}
+
+letGo = function(){
+	x -= hsign_from_direction(pushDirection)
+	y -= vsign_from_direction(pushDirection)
+	vspd = pushKnockbackMult*pushSpd*vsign_from_direction(pushDirection)
+	hspd = pushKnockbackMult*pushSpd*hsign_from_direction(pushDirection)
+	pushDirection = noone
+	pullDirection = noone
+	pushCommand = noone
+	pullCommand = noone
+}
+	
+collect = function(itemID){
+	//check Item type
+	//if Upgrade create upgrade showoff object
+	if(object_is_ancestor(itemID.object_index, obj_pickableUpgrade)){
+		var showoffID = instance_create_layer(0,0,"Controllers",obj_showoff_upgrade)
+		showoffID.initalize(itemID)
+	//if collectable create collectable showoff object
+	} else if(object_is_ancestor(itemID.object_index, obj_pickableCollectable)){
+		var showoffID = instance_create_layer(0,0,"Controllers",obj_showoff_collectable)
+		showoffID.initalize(itemID)
+	} else {
+		show_error("Pickable item not upgrade nor collectable", true)
+	}
+	
+}
+
+collect_end = function(){
+	heldPickableSpr = noone
+	state = free_state
 }
 
 /// ---- State code ---- ///
@@ -123,19 +159,25 @@ push_state = function(){
 	//player let go of the object
 	} else {
 		state = free_state
-		x -= hsign_from_direction(pushDirection)
-		y -= vsign_from_direction(pushDirection)
-		vspd = pushKnockbackMult*pushSpd*vsign_from_direction(pushDirection)
-		hspd = pushKnockbackMult*pushSpd*hsign_from_direction(pushDirection)
-		pushDirection = noone
-		pushCommand = noone
+		letGo()
 	}
 }
 
 /// Hold State ///
 hold_state = function(){
 	if(cmdHOLD()){
-		if(pushCommand() && !pullCommand()){
+		if (cmdPICKUP()){
+			for(var i = 0; i<ds_list_size(wallsPushed); i++){
+				if(object_is_ancestor(wallsPushed[|i].object_index, obj_pickable)){
+					letGo()
+					state = collect_state
+					collect(wallsPushed[|i].object_index)
+					heldPickableSpr = wallsPushed[|i].sprite_index
+					ds_list_clear(wallsPushed)
+					break
+				}
+			}
+		} else if(pushCommand() && !pullCommand()){
 			push()
 		} else if (pullCommand()){
 			pull()
@@ -144,16 +186,13 @@ hold_state = function(){
 	//Player let go
 	} else {
 		state = free_state
-		x += hsign_from_direction(pullDirection)
-		y += vsign_from_direction(pullDirection)
-		vspd = pushKnockbackMult*pushSpd*vsign_from_direction(pushDirection)
-		hspd = pushKnockbackMult*pushSpd*hsign_from_direction(pushDirection)
-		pushDirection = noone
-		pullDirection = noone
-		pushCommand = noone
-		pullCommand = noone
-		
+		letGo()
 	}
+}
+
+/// Collect State ///
+collect_state = function(){
+	//No input just showing off the item
 }
 
 state = free_state
