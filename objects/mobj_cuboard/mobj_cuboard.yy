@@ -28,7 +28,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Movable Objects",
-    "path": "folders/Objects/Movable Objects.yy",
+    "path": "folders/Objects/Walls/Movable Objects.yy",
   },
   "resourceVersion": "1.0",
   "name": "mobj_cuboard",

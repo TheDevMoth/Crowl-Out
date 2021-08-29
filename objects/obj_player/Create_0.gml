@@ -21,6 +21,7 @@ pushCommand = noone
 pullCommand = noone
 wallsPushed = ds_list_create() //Objects being currently pushed by the player
 heldPickableSpr = noone
+drawHalo = noone
 
 /// ---- Functions ---- ///
 push = function(){
@@ -89,10 +90,12 @@ collect = function(itemID){
 	if(object_is_ancestor(itemID.object_index, obj_pickableUpgrade)){
 		var showoffID = instance_create_layer(0,0,"Controllers",obj_showoff_upgrade)
 		showoffID.initalize(itemID)
+		drawHalo = true
 	//if collectable create collectable showoff object
-	} else if(object_is_ancestor(itemID.object_index, obj_pickableCollectable)){
-		var showoffID = instance_create_layer(0,0,"Controllers",obj_showoff_collectable)
+	} else if(object_is_ancestor(itemID.object_index, obj_pickableCollectible)){
+		var showoffID = instance_create_layer(0,0,"Controllers",obj_showoff_collectible)
 		showoffID.initalize(itemID)
+		drawHalo = false
 	} else {
 		show_error("Pickable item not upgrade nor collectable", true)
 	}
@@ -100,8 +103,10 @@ collect = function(itemID){
 }
 
 collect_end = function(){
-	heldPickableSpr = noone
-	state = free_state
+	if(state == collect_state){
+		heldPickableSpr = noone
+		state = free_state
+	}
 }
 
 /// ---- State code ---- ///
@@ -179,7 +184,7 @@ hold_state = function(){
 			}
 		} else if(pushCommand() && !pullCommand()){
 			push()
-		} else if (pullCommand()){
+		} else if (pullCommand() && !pushCommand()){
 			pull()
 		}
 		
@@ -193,6 +198,9 @@ hold_state = function(){
 /// Collect State ///
 collect_state = function(){
 	//No input just showing off the item
+	if(!drawHalo && (cmdMove())){
+		collect_end()
+	}
 }
 
 state = free_state

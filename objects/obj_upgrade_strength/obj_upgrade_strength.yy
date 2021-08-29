@@ -33,8 +33,8 @@
     {"propertyId":{"name":"bigSprite","path":"objects/obj_pickableUpgrade/obj_pickableUpgrade.yy",},"objectId":{"name":"obj_pickableUpgrade","path":"objects/obj_pickableUpgrade/obj_pickableUpgrade.yy",},"value":"spr_ph_weCanDoIt_birb","resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMOverriddenProperty",},
   ],
   "parent": {
-    "name": "Objects",
-    "path": "folders/Objects.yy",
+    "name": "Upgrades",
+    "path": "folders/Objects/Collectables/Upgrades.yy",
   },
   "resourceVersion": "1.0",
   "name": "obj_upgrade_strength",
