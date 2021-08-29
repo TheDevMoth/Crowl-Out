@@ -29,7 +29,9 @@
   ],
   "properties": [
     {"varType":2,"value":"","rangeEnabled":false,"rangeMin":0.0,"rangeMax":10.0,"listItems":[],"multiselect":false,"filters":[],"resourceVersion":"1.0","name":"itemDescription","tags":[],"resourceType":"GMObjectProperty",},
-    {"varType":7,"value":"$00FFFFFF","rangeEnabled":false,"rangeMin":0.0,"rangeMax":10.0,"listItems":[],"multiselect":false,"filters":[],"resourceVersion":"1.0","name":"variable_name","tags":[],"resourceType":"GMObjectProperty",},
+    {"varType":5,"value":"spr_pickableUpgrade","rangeEnabled":false,"rangeMin":0.0,"rangeMax":10.0,"listItems":[],"multiselect":false,"filters":[
+        "GMSprite",
+      ],"resourceVersion":"1.0","name":"bigSprite","tags":[],"resourceType":"GMObjectProperty",},
   ],
   "overriddenProperties": [],
   "parent": {

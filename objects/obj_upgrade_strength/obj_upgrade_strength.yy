@@ -1,7 +1,7 @@
 {
   "spriteId": {
-    "name": "spr_ph_strengthUp",
-    "path": "sprites/spr_ph_strengthUp/spr_ph_strengthUp.yy",
+    "name": "spr_ph_s_weCanDoIt_birb",
+    "path": "sprites/spr_ph_s_weCanDoIt_birb/spr_ph_s_weCanDoIt_birb.yy",
   },
   "solid": false,
   "visible": true,
@@ -23,11 +23,14 @@
   "physicsStartAwake": true,
   "physicsKinematic": false,
   "physicsShapePoints": [],
-  "eventList": [],
+  "eventList": [
+    {"isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
+  ],
   "properties": [],
   "overriddenProperties": [
-    {"propertyId":{"name":"itemName","path":"objects/obj_pickable/obj_pickable.yy",},"objectId":{"name":"obj_pickable","path":"objects/obj_pickable/obj_pickable.yy",},"value":"Power Up","resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMOverriddenProperty",},
-    {"propertyId":{"name":"itemDescription","path":"objects/obj_pickableUpgrade/obj_pickableUpgrade.yy",},"objectId":{"name":"obj_pickableUpgrade","path":"objects/obj_pickableUpgrade/obj_pickableUpgrade.yy",},"value":"Crow can now push more things in a row","resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMOverriddenProperty",},
+    {"propertyId":{"name":"itemName","path":"objects/obj_pickable/obj_pickable.yy",},"objectId":{"name":"obj_pickable","path":"objects/obj_pickable/obj_pickable.yy",},"value":"\"Mom's \\\"We can do it\\\" poster\"","resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMOverriddenProperty",},
+    {"propertyId":{"name":"itemDescription","path":"objects/obj_pickableUpgrade/obj_pickableUpgrade.yy",},"objectId":{"name":"obj_pickableUpgrade","path":"objects/obj_pickableUpgrade/obj_pickableUpgrade.yy",},"value":"\"Very Inspiring\\nCrow can now push more things in a row\"","resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMOverriddenProperty",},
+    {"propertyId":{"name":"bigSprite","path":"objects/obj_pickableUpgrade/obj_pickableUpgrade.yy",},"objectId":{"name":"obj_pickableUpgrade","path":"objects/obj_pickableUpgrade/obj_pickableUpgrade.yy",},"value":"spr_ph_weCanDoIt_birb","resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMOverriddenProperty",},
   ],
   "parent": {
     "name": "Objects",
