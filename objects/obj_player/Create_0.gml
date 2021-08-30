@@ -29,8 +29,8 @@ push = function(){
 	if(!instance_place(x+hsign_from_direction(pushDirection), y+vsign_from_direction(pushDirection), obj_wall)){
 		ds_list_clear(wallsPushed)
 		//Check for movable walls, if none are found it is an immovable wall
-		var numWallsBeingPushed = instance_place_list(x+hsign_from_direction(pushDirection), y+vsign_from_direction(pushDirection), obj_movableWall, wallsPushed, false)
-		if(numWallsBeingPushed <= wallsCanPush ){
+		var numWallsBeingPushed = instance_place_list(x+hsign_from_direction(pushDirection)*maxSpd, y+vsign_from_direction(pushDirection)*maxSpd, obj_movableWall, wallsPushed, false)
+		if(numWallsBeingPushed <= wallsCanPush){
 			var pushable = true //pushable until proven otherwise
 			for(var i = 0; i<numWallsBeingPushed; i+=1){
 				pushable = (pushable && wallsPushed[|i].push(floor(wallsCanPush/numWallsBeingPushed), pushSpd*hsign_from_direction(pushDirection), pushSpd*vsign_from_direction(pushDirection)))
@@ -78,6 +78,7 @@ letGo = function(){
 	y -= vsign_from_direction(pushDirection)
 	vspd = pushKnockbackMult*pushSpd*vsign_from_direction(pushDirection)
 	hspd = pushKnockbackMult*pushSpd*hsign_from_direction(pushDirection)
+	ds_list_clear(wallsPushed)
 	pushDirection = noone
 	pullDirection = noone
 	pushCommand = noone
@@ -125,7 +126,7 @@ free_state = function(){
 	//Slowing down
 	vspd -= vspd/maxSpd*moveAcc
 	hspd -= hspd/maxSpd*moveAcc
-	//Snap speed to zero (since the above equation can go on to infinitiy)
+	//Snap speed to zero (since the above equation can go on forever)
 	if(abs(vspd) < moveAcc/4) vspd = 0
 	if(abs(hspd) < moveAcc/4) hspd = 0
 	
@@ -136,6 +137,7 @@ free_state = function(){
 		hspd = 0
 		vspd = 0
 		state = push_state
+		push()
 	}
 	if(vspd != 0 && !place_free(x, y+roundout(vspd))){
 		pushDirection = find_direction(vspd, "v")
@@ -143,6 +145,7 @@ free_state = function(){
 		hspd = 0
 		vspd = 0
 		state = push_state
+		push()
 	}
 	
 	//Movement
@@ -174,11 +177,10 @@ hold_state = function(){
 		if (cmdPICKUP()){
 			for(var i = 0; i<ds_list_size(wallsPushed); i++){
 				if(object_is_ancestor(wallsPushed[|i].object_index, obj_pickable)){
-					letGo()
 					state = collect_state
 					collect(wallsPushed[|i].object_index)
 					heldPickableSpr = wallsPushed[|i].sprite_index
-					ds_list_clear(wallsPushed)
+					letGo()
 					break
 				}
 			}
