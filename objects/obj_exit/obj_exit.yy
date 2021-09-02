@@ -1,7 +1,7 @@
 {
   "spriteId": {
-    "name": "spr_wall",
-    "path": "sprites/spr_wall/spr_wall.yy",
+    "name": "spr_exit",
+    "path": "sprites/spr_exit/spr_exit.yy",
   },
   "solid": true,
   "visible": true,
@@ -31,7 +31,7 @@
     "path": "folders/Objects/Walls.yy",
   },
   "resourceVersion": "1.0",
-  "name": "obj_wall",
+  "name": "obj_exit",
   "tags": [],
   "resourceType": "GMObject",
 }

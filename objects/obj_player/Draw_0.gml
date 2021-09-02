@@ -40,3 +40,4 @@ if(state == push_state){
 }
 
 draw_self()
+

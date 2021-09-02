@@ -6,9 +6,9 @@ walkSpd = 1
 runSpd = 3
 pushSpd = 0.1
 wallsCanPush = 1 //number of walls crow can push together
-pushKnockbackMult = -4
+pushKnockbackMult = -4 //
 pullBufferDistance = 6 //Minimum number of pixels between the player and the object behind them when pulling. to disallow players from half pulling
-swingDistance = 2
+swingDistance = 2 //The up and down movement of shown items in pixels
 
 // Variables used for logic
 maxSpd = walkSpd
@@ -30,6 +30,7 @@ push = function(){
 		ds_list_clear(wallsPushed)
 		//Check for movable walls, if none are found it is an immovable wall
 		var numWallsBeingPushed = instance_place_list(x+hsign_from_direction(pushDirection)*maxSpd, y+vsign_from_direction(pushDirection)*maxSpd, obj_movableWall, wallsPushed, false)
+		//
 		if(numWallsBeingPushed <= wallsCanPush){
 			var pushable = true //pushable until proven otherwise
 			for(var i = 0; i<numWallsBeingPushed; i+=1){
