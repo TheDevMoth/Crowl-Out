@@ -5,7 +5,7 @@ event_inherited();
 
 pick = function(){
 	//Upgrade
-	obj_player.wallsCanPush += 1
+	obj_player.wallsCanPush += 9000
 	//Update inventory
 	
 	//set self for deletion

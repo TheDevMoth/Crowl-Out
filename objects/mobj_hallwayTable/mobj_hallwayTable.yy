@@ -1,7 +1,7 @@
 {
   "spriteId": {
-    "name": "spr_consoleTable",
-    "path": "sprites/spr_consoleTable/spr_consoleTable.yy",
+    "name": "spr_hallwayTable",
+    "path": "sprites/spr_hallwayTable/spr_hallwayTable.yy",
   },
   "solid": false,
   "visible": true,
