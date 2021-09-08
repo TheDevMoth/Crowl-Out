@@ -3,14 +3,14 @@
 //sprite_index = sprite
 solid = true
 wallsBeingPushed = ds_list_create()
-
+pushedThisStep = false
 
 push = function(wallsCanPush, hdist, vdist){
 	//check if player can push this many walls
 	if(wallsCanPush == 0){
+		alarm[0] = 6
 		return false
 	}
-	
 	//Check for walls
 	if(!place_free(x+sign(hdist), y+sign(vdist))){
 		//Check for movable walls
@@ -36,7 +36,7 @@ push = function(wallsCanPush, hdist, vdist){
 		alarm[0] = 6
 		return true
 	}
-	
+	alarm[0] = 6
 	return false
 	
 }
