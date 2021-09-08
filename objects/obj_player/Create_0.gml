@@ -4,7 +4,7 @@
 moveAcc = 0.3
 walkSpd = 1
 runSpd = 3
-pushSpd = 0.1
+pushSpd = 0.15
 wallsCanPush = 1 //number of walls crow can push together
 pushKnockbackMult = -4 //
 pullBufferDistance = 6 //Minimum number of pixels between the player and the object behind them when pulling. to disallow players from half pulling

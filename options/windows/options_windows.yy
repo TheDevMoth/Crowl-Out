@@ -1,5 +1,5 @@
 {
-  "option_windows_display_name": "Crow-l out",
+  "option_windows_display_name": "Crowl out",
   "option_windows_executable_name": "Crowl out.exe",
   "option_windows_version": "1.0.0.0",
   "option_windows_company_info": "Power of Tree",
