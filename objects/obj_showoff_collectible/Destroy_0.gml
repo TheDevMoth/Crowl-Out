@@ -1,2 +1,2 @@
 /// @desc
-obj_player.collect_end()
+//obj_player.collect_end()

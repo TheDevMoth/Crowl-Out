@@ -74,11 +74,11 @@ pull = function(){
 	}
 }
 
-letGo = function(){
+letGo = function(moveMult = 1){
 	x -= hsign_from_direction(pushDirection)
 	y -= vsign_from_direction(pushDirection)
-	vspd = pushKnockbackMult*pushSpd*vsign_from_direction(pushDirection)
-	hspd = pushKnockbackMult*pushSpd*hsign_from_direction(pushDirection)
+	vspd = pushKnockbackMult*pushSpd*vsign_from_direction(pushDirection)*moveMult
+	hspd = pushKnockbackMult*pushSpd*hsign_from_direction(pushDirection)*moveMult
 	ds_list_clear(wallsPushed)
 	pushDirection = noone
 	pullDirection = noone
@@ -181,7 +181,7 @@ hold_state = function(){
 					state = collect_state
 					collect(wallsPushed[|i].object_index)
 					heldPickableSpr = wallsPushed[|i].sprite_index
-					letGo()
+					letGo(0)
 					break
 				}
 			}

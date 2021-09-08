@@ -1,10 +1,12 @@
 /// @desc Snap to grid
-var playerHolding;
+var canSnap = true
 
 with(obj_player){
-	playerHolding = (state == hold_state)
+	if(state == hold_state){
+		canSnap = (ds_list_find_index(wallsPushed,id)==-1)
+	}
 }
-if(!playerHolding){
+if(!canSnap){
 	if((x % 16 != 0) && (x % 16 <= 1)){
 		if (!place_meeting(x-x%16,y, all)){
 			x -= x%16
