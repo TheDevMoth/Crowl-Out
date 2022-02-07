@@ -1,2 +1,3 @@
 /// @desc
-pushedThisStep = false
+if(global.snap == true)
+	snap()

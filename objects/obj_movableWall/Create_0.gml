@@ -2,41 +2,56 @@
 //Pick a random sprite
 //sprite_index = sprite
 solid = true
-wallsBeingPushed = ds_list_create()
-pushedThisStep = false
+wallInTheWay = noone
 
-push = function(wallsCanPush, hdist, vdist){
+init_push = function(wallsCanPush, hdist, vdist){
 	//check if player can push this many walls
 	if(wallsCanPush == 0){
-		alarm[0] = 6
 		return false
 	}
 	//Check for walls
 	if(!place_free(x+sign(hdist), y+sign(vdist))){
 		//Check for movable walls
-		ds_list_clear(wallsBeingPushed)
-		var numWallsInTheWay = instance_place_list(x+sign(hdist), y+sign(vdist), obj_movableWall, wallsBeingPushed, false)
-		if(numWallsInTheWay != 0 && numWallsInTheWay <= wallsCanPush){
-			var pushable = true //pushable until proven otherwise
-			for(var i = 0; i<numWallsInTheWay; i+=1){
-				pushable = (pushable && wallsBeingPushed[|i].push(floor((wallsCanPush-1)/numWallsInTheWay), hdist, vdist))
-			}
-			if(pushable){
-				//Success
-				x += hdist
-				y += vdist
-				alarm[0] = 6
-				return true
-			} //Case further walls can not move
-		} //Case too many walls infront of it or 0 meaning immovable wall
+		wallInTheWay = instance_place(x+sign(hdist), y+sign(vdist), obj_movableWall)
+		if(wallInTheWay == noone){
+			return false //immovable wall
+		} else if(wallInTheWay.init_push(wallsCanPush-1, hdist, vdist)){
+			//Success
+			return true
+		} else {
+			wallInTheWay = noone
+			return false //second wall can not be moved
+		}
 	} else {
 		//Case nothing in the way
-		x += hdist
-		y += vdist
-		alarm[0] = 6
 		return true
 	}
-	alarm[0] = 6
-	return false
+}
+
+push = function(hdist, vdist){
+	if(wallInTheWay != noone){
+		wallInTheWay.push(hdist, vdist)
+	}	
+	x += hdist
+	y += vdist
+}
+
+snap = function(){
+	wallInTheWay = noone
+	if((x % 16 != 0) && (x % 16 <= 2)){
+		x -= x%16
+		show_debug_message("Snapped")
+	} else if (x % 16 >= 14){
+		x += 16 - x%16
+		show_debug_message("Snapped")
+	}
+
+	if((y % 16 != 0) && (y % 16 <= 2)){
+		y -= y%16
+		show_debug_message("Snapped")
+	} else if (y % 16 >= 14){
+		y += 16 - y%16
+		show_debug_message("Snapped")
+	}
 	
 }

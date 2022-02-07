@@ -1,5 +1,5 @@
 /// @desc
-if(state != hold_state){
+if(state == free_state){
 	if(cmdRIGHT()){
 		image_xscale=-1
 	} else if(cmdLEFT()) {
@@ -14,7 +14,10 @@ if(state != hold_state){
 //	sprite_index = spr_crow_push //TODO add Down animation
 //} else 
 if(state == push_state){
-	sprite_index = spr_crow_push
+	if (lastDir==pullDirection)
+		sprite_index = spr_crow_pull
+	else
+		sprite_index = spr_crow_push
 } else if(state == hold_state){
 	if(pushCommand() && !pullCommand()){
 		sprite_index = spr_crow_push

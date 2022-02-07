@@ -3,7 +3,7 @@
     "name": "spr_exit",
     "path": "sprites/spr_exit/spr_exit.yy",
   },
-  "solid": true,
+  "solid": false,
   "visible": true,
   "spriteMaskId": null,
   "persistent": false,
