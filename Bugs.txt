@@ -1,0 +1,2 @@
+Cant collect object whithout pushing it first
+big objects only check for one object infront of them
