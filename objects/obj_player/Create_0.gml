@@ -4,10 +4,12 @@
 moveAcc = 0.3
 walkSpd = 1
 runSpd = 3
-pushSpd = 0.125
+pushSpd = 0.15
+grabSpdMod = 3/4
 wallsCanPush = 1 //number of walls crow can push together
 pushKnockbackMult = -4 //
-pullBufferDistance = 6 //Minimum number of pixels between the player and the object behind them when pulling. to disallow players from half pulling
+maxGrabDist = 10
+//pullBufferDistance = 6 //Minimum number of pixels between the player and the object behind them when pulling. to disallow players from half pulling
 swingDistance = 2 //The up and down movement of shown items in pixels
 
 // Variables used for logic
@@ -70,6 +72,34 @@ free_state = function(){
 	//Movement
 	x += hspd
 	y += vspd
+	
+	//Grab nearest object
+	if(cmdHOLD() && state == free_state){
+		for(var i = 1; i<=maxGrabDist; i++){// There has to be a better way to do this... could use get spd from direction the iterate through directions with a nested loop
+			//check right
+			if(place_meeting(x+i, y, obj_movableWall)) {
+				grab(i, 0)
+				break
+			}
+			//check Up
+			if(place_meeting(x, y-i, obj_movableWall)) {
+				grab(0, -i)
+				break
+			}
+			//check Left
+			if(place_meeting(x-i, y, obj_movableWall)) {
+				grab(-i, 0)
+				break
+			}
+			//check Bottom
+			if(place_meeting(x, y+i, obj_movableWall)) {
+				grab(0, i)
+				break
+			}
+		}
+	}
+	
+	
 }
 
 /// Push State ///
@@ -86,6 +116,34 @@ push_state = function(){
 	} else {
 		push(lastDir)
 	}
+}
+
+/// Grab State /// player moving to grab an object
+grab_state = function(){
+	//Collision detection
+	if(!place_free(x+roundout(hspd), y)){
+		pushDirection = find_direction(hspd, "h")
+		pushCommand = command_from_direction(pushDirection)
+		pullDirection = find_opposite_direction(pushDirection)
+		pullCommand = command_from_direction(pullDirection)
+		hspd = 0
+		vspd = 0
+		state = hold_state
+	}
+	
+	if(!place_free(x, y+roundout(vspd))){
+		pushDirection = find_direction(vspd, "v")
+		pushCommand = command_from_direction(pushDirection)
+		pullDirection = find_opposite_direction(pushDirection)
+		pullCommand = command_from_direction(pullDirection)
+		hspd = 0
+		vspd = 0
+		state = hold_state
+	}
+	
+	//Movement
+	x += hspd
+	y += vspd
 }
 
 /// Hold State ///
@@ -230,3 +288,8 @@ collect_end = function(){
 	}
 }
 
+grab = function(autoH,autoV){
+	vspd = grabSpdMod*walkSpd*autoV/maxGrabDist
+	hspd = grabSpdMod*walkSpd*autoH/maxGrabDist
+	state = grab_state
+}

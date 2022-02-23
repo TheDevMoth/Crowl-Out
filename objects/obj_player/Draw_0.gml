@@ -1,8 +1,8 @@
 /// @desc
-if(state == free_state){
-	if(cmdRIGHT()){
+if(state == free_state || state == grab_state){
+	if(hspd>0){	//if(cmdRIGHT()){
 		image_xscale=-1
-	} else if(cmdLEFT()) {
+	} else if(hspd<0) {		//} else if(cmdLEFT()) {
 		image_xscale=1
 	}
 }
